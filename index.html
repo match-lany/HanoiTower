@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>汉诺塔小游戏</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-background"></div>
+    
+    <div class="container">
+        <header>
+            <h1>汉诺塔</h1>
+        </header>
+        
+        <div class="game-controls">
+            <div class="disk-count-container">
+                <label for="diskCount">选择圆盘数量:</label>
+                <div class="disk-count-selector">
+                    <div class="disk-buttons">
+                        <button class="disk-button" data-value="1">1</button>
+                        <button class="disk-button" data-value="2">2</button>
+                        <button class="disk-button" data-value="3">3</button>
+                        <button class="disk-button" data-value="4">4</button>
+                        <button class="disk-button" data-value="5">5</button>
+                        <button class="disk-button" data-value="6">6</button>
+                        <button class="disk-button" data-value="7">7</button>
+                    </div>
+                    <input type="hidden" id="diskCount" value="3">
+                </div>
+            </div>
+            <button id="restart" class="restart-button">重新开始</button>
+        </div>
+        
+        <div class="game-info">
+            <div class="moves">移动次数: <span id="moveCount">0</span></div>
+        </div>
+        
+        <div class="game-container">
+            <div class="base-container">
+                <div class="tower" id="tower1">
+                    <div class="pole"></div>
+                    <div class="disks"></div>
+                </div>
+                <div class="tower" id="tower2">
+                    <div class="pole"></div>
+                    <div class="disks"></div>
+                </div>
+                <div class="tower" id="tower3">
+                    <div class="pole"></div>
+                    <div class="disks"></div>
+                </div>
+                <div class="board-base"></div>
+            </div>
+        </div>
+        
+        <div class="message" id="message"></div>
+    </div>
+    
+    <!-- 音效资源 -->
+    <audio id="moveSound" src="sounds/move.mp3" preload="auto"></audio>
+    <audio id="errorSound" src="sounds/error.mp3" preload="auto"></audio>
+    <audio id="victorySound" src="sounds/victory.mp3" preload="auto"></audio>
+    <audio id="perfectSound" src="sounds/perfect.mp3" preload="auto"></audio>
+    
+    <!-- 庆祝动画容器 -->
+    <div id="celebration" class="celebration-container"></div>
+    <div id="perfectCelebration" class="celebration-container perfect-celebration"></div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,429 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #4a6baf;
+    --secondary-color: #7bd46e;
+    --accent-color: #ffcc29;
+    --text-color: #2c3e50;
+    --light-text: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --background-gradient: linear-gradient(to bottom, #b3e0ff, #eff7ff);
+    --pole-color: #deb887;
+    --base-color: #8b4513;
+}
+
+body {
+    font-family: 'Baloo 2', 'Comic Sans MS', cursive, sans-serif;
+    background: var(--background-gradient);
+    color: var(--text-color);
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    display: grid;
+    place-items: center;
+    padding: 10px;
+}
+
+.game-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 204, 41, 0.1) 30px, transparent 50px),
+        radial-gradient(circle at 90% 30%, rgba(123, 212, 110, 0.1) 40px, transparent 60px),
+        radial-gradient(circle at 50% 80%, rgba(74, 107, 175, 0.1) 50px, transparent 70px);
+    z-index: -1;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    min-height: 450px;
+    display: grid;
+    grid-template-rows: auto auto auto 1fr auto;
+    gap: 15px;
+    padding: 20px;
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+header {
+    text-align: center;
+}
+
+h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px var(--shadow-color);
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.game-controls {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 15px;
+}
+
+.disk-count-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.disk-count-container label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.disk-count-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.disk-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.disk-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: #e1e1e1;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 6px var(--shadow-color);
+    display: grid;
+    place-items: center;
+}
+
+.disk-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px var(--shadow-color);
+}
+
+.disk-button.active {
+    background-color: var(--secondary-color);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* 禁用状态 */
+.disk-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.restart-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    transition: all 0.3s;
+    min-width: 120px;
+}
+
+.restart-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+.restart-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.game-info {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-color);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.game-container {
+    display: grid;
+    place-items: center;
+    min-height: 250px;
+    position: relative;
+}
+
+.base-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+}
+
+.tower {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.pole {
+    position: absolute;
+    width: 14px;
+    background-color: var(--pole-color);
+    bottom: 18px;
+    height: 200px;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.board-base {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 18px;
+    background-color: var(--base-color);
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+}
+
+.disks {
+    position: absolute;
+    bottom: 18px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    width: 100%;
+    z-index: 2;
+}
+
+.disk {
+    margin-bottom: 5px;
+    border-radius: 20px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.disk:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.disk.selected {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    animation: pulse 1s infinite alternate;
+}
+
+.disk.error {
+    animation: shake 0.5s;
+}
+
+@keyframes pulse {
+    0% { transform: translateY(-10px) scale(1); }
+    100% { transform: translateY(-10px) scale(1.05); }
+}
+
+.message {
+    height: 50px;
+    text-align: center;
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 1.3rem;
+    padding: 8px;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* 色彩设定 - 按自然光谱顺序，从小到大 */
+.disk-color-1 { 
+    background: linear-gradient(to bottom, #ff7675, #e74c3c); 
+    border-color: #ff7675;
+} /* 赤 */
+.disk-color-2 { 
+    background: linear-gradient(to bottom, #f39c12, #e67e22); 
+    border-color: #f39c12;
+} /* 橙 */
+.disk-color-3 { 
+    background: linear-gradient(to bottom, #fdcb6e, #f1c40f); 
+    border-color: #fdcb6e;
+} /* 黄 */
+.disk-color-4 { 
+    background: linear-gradient(to bottom, #55efc4, #2ecc71); 
+    border-color: #55efc4;
+} /* 绿 */
+.disk-color-5 { 
+    background: linear-gradient(to bottom, #81ecec, #00cec9); 
+    border-color: #81ecec;
+} /* 青 */
+.disk-color-6 { 
+    background: linear-gradient(to bottom, #74b9ff, #0984e3); 
+    border-color: #74b9ff;
+} /* 蓝 */
+.disk-color-7 { 
+    background: linear-gradient(to bottom, #a29bfe, #6c5ce7); 
+    border-color: #a29bfe;
+} /* 紫 */
+
+/* 庆祝动画容器 */
+.celebration-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+    display: none;
+    overflow: hidden;
+}
+
+/* 纸屑和星星的样式 */
+.confetti, .star {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+    transform-origin: center;
+}
+
+.confetti {
+    border-radius: 0;
+}
+
+.star {
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+/* 动画关键帧 */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes celebrate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(calc(100vh + 100px)) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.7; transform: scale(0.8) rotate(45deg); }
+}
+
+/* 响应式设计 - 改进移动设备上的显示 */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        gap: 10px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .game-controls {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        gap: 10px;
+    }
+    
+    .disk-count-container {
+        align-items: center;
+    }
+    
+    .restart-button {
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+    }
+    
+    .disk {
+        height: 20px;
+    }
+    
+    .message {
+        font-size: 1.1rem;
+    }
+}
+
+/* 小屏幕设备调整圆盘大小 */
+@media (max-width: 450px) {
+    .pole {
+        width: 10px;
+    }
+    
+    .disk-button {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .disk {
+        height: 18px;
+        border-width: 1px;
+    }
+}
+
+/* 最小高度限制 */
+@media (max-height: 500px) {
+    .container {
+        min-height: 400px;
+    }
+    
+    .game-container {
+        min-height: 200px;
+    }
+    
+    .pole {
+        height: 180px;
+    }
+} 
