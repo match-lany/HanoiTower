@@ -305,14 +305,20 @@ document.addEventListener('DOMContentLoaded', () => {
         gameCompleted = false;
         gameStarted = false;
         moveCountElement.textContent = '0';
+        
+        // 清空消息
         messageElement.textContent = '';
         messageElement.classList.remove('perfect-message');
+        messageElement.classList.remove('rules-message');
         
         // 移除可能存在的之前的装饰
         const oldDecoration = messageElement.querySelector('.message-decoration');
         if (oldDecoration) {
             oldDecoration.remove();
         }
+        
+        // 显示游戏规则
+        showGameRules();
         
         // 移除游戏区域的完美光环效果
         document.querySelector('.game-container').classList.remove('perfect-glow');
@@ -356,6 +362,37 @@ document.addEventListener('DOMContentLoaded', () => {
         celebrationContainer.innerHTML = '';
         perfectCelebrationContainer.innerHTML = '';
     }
+    
+    // 显示游戏规则
+    function showGameRules() {
+        const rulesText = `<div class="rules-title">🎮 游戏规则 🎮</div>
+                          <div class="rules-content">将所有圆盘从左边移到右边，大盘不能放在小盘上面哦！<br>点击柱子选择和放置圆盘。加油！✨</div>`;
+        
+        // 更新主消息区域
+        messageElement.innerHTML = rulesText;
+        messageElement.classList.add('rules-message');
+        
+        // 添加装饰元素
+        const decoration = document.createElement('div');
+        decoration.className = 'rules-decoration';
+        
+        // 添加装饰图标
+        const icons = ['🎯', '🎲', '🎪', '🎨'];
+        icons.forEach(icon => {
+            const span = document.createElement('span');
+            span.className = 'decoration-icon';
+            span.textContent = icon;
+            decoration.appendChild(span);
+        });
+        
+        messageElement.appendChild(decoration);
+        
+        // 同步更新克隆消息 - 用于平板横屏模式
+        if (messageCloneElement) {
+            messageCloneElement.innerHTML = messageElement.innerHTML;
+            messageCloneElement.classList.add('rules-message');
+        }
+    }
 
     // 创建一个圆盘
     function createDisk(size) {
@@ -375,6 +412,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // 第一次点击时，游戏开始
         if (!gameStarted) {
             gameStarted = true;
+            // 清除规则消息
+            showMessage('');
             // 禁用圆盘数量选择按钮
             initDiskButtons();
         }
@@ -460,6 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
             messageElement.innerHTML = '';
             messageElement.classList.remove('perfect-message');
             messageElement.classList.remove('error-message');
+            messageElement.classList.remove('rules-message');
             
             // 同时更新克隆消息
             if (messageCloneElement) {
@@ -467,6 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 messageCloneElement.innerHTML = '';
                 messageCloneElement.classList.remove('perfect-message');
                 messageCloneElement.classList.remove('error-message');
+                messageCloneElement.classList.remove('rules-message');
             }
             return;
         }
@@ -476,6 +517,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 更新主消息区域
         messageElement.innerHTML = text;
+        
+        // 移除所有可能的样式类
+        messageElement.classList.remove('perfect-message');
+        messageElement.classList.remove('rules-message');
         
         if (isPerfect) {
             messageElement.classList.add('perfect-message');
@@ -494,18 +539,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             messageElement.appendChild(decoration);
-        } else {
-            messageElement.classList.remove('perfect-message');
         }
         
         // 同步更新克隆消息 - 用于平板横屏模式
         if (messageCloneElement) {
             messageCloneElement.innerHTML = messageElement.innerHTML;
             
+            // 同步清除所有样式类
+            messageCloneElement.classList.remove('perfect-message');
+            messageCloneElement.classList.remove('rules-message');
+            
             if (isPerfect) {
                 messageCloneElement.classList.add('perfect-message');
-            } else {
-                messageCloneElement.classList.remove('perfect-message');
             }
         }
     }
