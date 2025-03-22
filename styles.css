@@ -1129,4 +1129,75 @@ h1::after {
         margin: 0;
         overflow: hidden;
     }
+}
+
+/* 游戏规则消息样式 */
+.message.rules-message {
+    background: linear-gradient(to right, rgba(255, 253, 231, 0.95), rgba(252, 248, 232, 0.95));
+    border: 2px dashed var(--secondary-color);
+    color: #35495e;
+    padding: 12px 15px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.rules-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-family: var(--header-font);
+    text-shadow: 1px 1px 0 #fff;
+}
+
+.rules-content {
+    line-height: 1.5;
+    font-family: var(--text-font);
+}
+
+.rules-decoration {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 12px;
+}
+
+/* PC设备上的规则消息样式调整 */
+@media (min-width: 1024px) {
+    .message.rules-message {
+        padding: 15px 20px;
+        font-size: 1.2rem;
+    }
+    
+    .rules-title {
+        font-size: 1.4rem;
+    }
+}
+
+/* 移动设备上的规则消息样式调整 */
+@media (max-width: 767px) {
+    .message.rules-message {
+        padding: 10px;
+        font-size: 1rem;
+    }
+    
+    .rules-title {
+        font-size: 1.15rem;
+        margin-bottom: 5px;
+    }
+    
+    .rules-decoration {
+        margin-top: 8px;
+        gap: 8px;
+    }
+}
+
+/* 平板横屏模式下的规则消息样式调整 */
+@media (orientation: landscape) and (min-width: 768px) and (max-width: 1023px) {
+    .message-clone.rules-message {
+        background: linear-gradient(to right, rgba(255, 253, 231, 0.95), rgba(252, 248, 232, 0.95));
+        border: 2px dashed var(--secondary-color);
+        color: #35495e;
+        padding: 12px 15px;
+    }
 } 
