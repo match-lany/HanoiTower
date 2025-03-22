@@ -1,12 +1,5 @@
-/**
- * 汉诺塔游戏
- * 一个响应式的汉诺塔网页游戏实现，支持多种设备和屏幕尺寸。
- * 功能包括：圆盘数量选择、移动计数、游戏完成检测和庆祝动画。
- */
 document.addEventListener('DOMContentLoaded', () => {
-    // ==================
-    // DOM元素引用
-    // ==================
+    // 获取DOM元素
     const diskCountInput = document.getElementById('diskCount');
     const diskButtons = document.querySelectorAll('.disk-button');
     const restartButton = document.getElementById('restart');
@@ -24,19 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
         towers[2].querySelector('.disks')
     ];
     
-    // 音效元素
+    // 获取音效元素
     const moveSound = document.getElementById('moveSound');
     const errorSound = document.getElementById('errorSound');
     const victorySound = document.getElementById('victorySound');
     const perfectSound = document.getElementById('perfectSound');
     
-    // 庆祝动画容器
+    // 获取庆祝动画容器
     const celebrationContainer = document.getElementById('celebration');
     const perfectCelebrationContainer = document.getElementById('perfectCelebration');
     
-    // ==================
-    // 游戏状态变量
-    // ==================
+    // 游戏状态
     let diskCount = 3; // 默认3个圆盘
     let moveCount = 0;
     let selectedDisk = null;
@@ -44,10 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameCompleted = false;
     let gameStarted = false;
 
-    /**
-     * 初始化圆盘选择按钮
-     * 设置激活状态和禁用状态，根据当前游戏状态更新按钮UI
-     */
+    // 初始化圆盘选择按钮
     function initDiskButtons() {
         // 先清除所有active状态
         diskButtons.forEach(button => {
@@ -71,10 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * 播放音效
-     * @param {HTMLAudioElement} sound - 要播放的音效元素
-     */
+    // 播放音效函数
     function playSound(sound) {
         // 重置音频以便可以连续播放
         sound.currentTime = 0;
@@ -83,11 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    /**
-     * 创建庆祝动画
-     * 根据是否完美通关创建不同的庆祝效果
-     * @param {boolean} isPerfect - 是否是完美通关（最少步数）
-     */
+    // 创建庆祝动画
     function createCelebration(isPerfect = false) {
         const container = isPerfect ? perfectCelebrationContainer : celebrationContainer;
         container.innerHTML = ''; // 清空现有内容
@@ -96,10 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 根据是否完美决定数量和元素类型
         const elementCount = isPerfect ? 150 : 50; // 完美通关时粒子数量更多
         
-        /**
-         * 创建持续产生新粒子的循环动画
-         * 定期产生新的庆祝元素，实现持续的庆祝效果
-         */
+        // 创建持续产生新粒子的循环动画
         function generateParticles() {
             // 清除部分旧粒子以避免过多DOM元素
             const oldElements = container.querySelectorAll('.confetti, .star, .perfect-icon');
@@ -205,12 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.celebrationInterval = animationInterval;
     }
     
-    /**
-     * 生成随机颜色
-     * @param {boolean} isPerfect - 是否为完美通关效果生成更明亮的颜色
-     * @param {number} alpha - 透明度值（可选）
-     * @returns {string} 颜色值（hex格式或rgba格式）
-     */
+    // 生成随机颜色
     function getRandomColor(isPerfect = false, alpha = 1) {
         // 完美通关使用更明亮、更丰富的颜色
         const colors = isPerfect ? [
@@ -242,20 +215,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return colors[Math.floor(Math.random() * colors.length)];
     }
     
-    /**
-     * 生成指定范围内的随机浮点数
-     * @param {number} min - 最小值
-     * @param {number} max - 最大值
-     * @returns {number} 生成的随机浮点数
-     */
+    // 生成随机浮点数
     function getRandomFloat(min, max) {
         return min + Math.random() * (max - min);
     }
 
-    /**
-     * 窗口大小变化时调整圆盘尺寸
-     * 根据容器宽度自动调整圆盘尺寸，确保在不同设备上的良好显示
-     */
+    // 窗口大小变化时调整圆盘尺寸
     function adjustDiskSizes() {
         const gameContainer = document.querySelector('.game-container');
         const containerWidth = gameContainer.offsetWidth;
@@ -285,21 +250,210 @@ document.addEventListener('DOMContentLoaded', () => {
         // 计算最大圆盘的宽度不应超过塔的宽度
         const maxDiskWidth = Math.min(towerWidth * 0.9, baseWidth + (diskCount * increment));
         
-        // 调整所有圆盘尺寸
-        const allDisks = document.querySelectorAll('.disk');
-        allDisks.forEach(disk => {
-            const size = parseInt(disk.dataset.size);
-            const width = baseWidth + ((diskCount + 1 - size) * increment);
-            disk.style.width = `${width}px`;
+        // 如果最大圆盘太宽，调整增量
+        if (baseWidth + (diskCount * increment) > maxDiskWidth) {
+            increment = (maxDiskWidth - baseWidth) / diskCount;
+        }
+
+        // 检查盘子总高度，确保不超出柱子高度
+        const pole = document.querySelector('.pole');
+        const poleHeight = pole.offsetHeight;
+        const diskHeight = parseInt(window.getComputedStyle(document.querySelector('.disk') || 
+                           {height: '24px'}).height) || 24;
+        const diskMargin = 2; // 盘子之间的间距 (在CSS中已设置为2px)
+        
+        // 计算所有盘子的总高度
+        const totalDisksHeight = diskCount * (diskHeight + diskMargin);
+        
+        // 如果总高度超过柱子高度的80%，则调整盘子高度
+        if (totalDisksHeight > poleHeight * 0.8) {
+            // 计算新的盘子高度和间距
+            const maxTotalHeight = poleHeight * 0.8;
+            const newDiskHeight = Math.floor((maxTotalHeight / diskCount) - diskMargin);
+            
+            // 应用新的盘子高度
+            document.querySelectorAll('.disk').forEach(disk => {
+                disk.style.height = `${newDiskHeight}px`;
+            });
+        }
+        
+        // 更新所有圆盘的宽度
+        document.querySelectorAll('.disk').forEach(disk => {
+            // 从类名中获取圆盘尺寸编号（如disk-color-3中的3）
+            const sizeClasses = Array.from(disk.classList)
+                .filter(cls => cls.startsWith('disk-color-'));
+            
+            if (sizeClasses.length > 0) {
+                const size = parseInt(sizeClasses[0].split('-')[2]);
+                const width = Math.max(baseWidth + (size * increment), baseWidth);
+                disk.style.width = `${width}px`;
+            }
         });
     }
+    
+    // 监听窗口大小变化
+    window.addEventListener('resize', adjustDiskSizes);
+    // 监听设备方向变化
+    window.addEventListener('orientationchange', adjustDiskSizes);
 
-    /**
-     * 显示游戏消息
-     * 在消息区域显示文本信息，同时更新克隆消息区域（用于平板横屏模式）
-     * @param {string} text - 要显示的消息文本
-     */
+    // 初始化游戏
+    function initGame() {
+        // 重置游戏状态
+        moveCount = 0;
+        selectedDisk = null;
+        selectedTower = null;
+        gameCompleted = false;
+        gameStarted = false;
+        moveCountElement.textContent = '0';
+        messageElement.textContent = '';
+        messageElement.classList.remove('perfect-message');
+        
+        // 移除可能存在的之前的装饰
+        const oldDecoration = messageElement.querySelector('.message-decoration');
+        if (oldDecoration) {
+            oldDecoration.remove();
+        }
+        
+        // 移除游戏区域的完美光环效果
+        document.querySelector('.game-container').classList.remove('perfect-glow');
+        
+        // 移除塔的完美效果
+        document.querySelectorAll('.tower').forEach(tower => {
+            tower.classList.remove('tower-perfect');
+        });
+        
+        // 更新圆盘选择按钮状态
+        initDiskButtons();
+
+        // 清空所有塔
+        disksContainers.forEach(container => {
+            container.innerHTML = '';
+        });
+
+        // 创建圆盘并放在第一个塔上
+        for (let i = diskCount; i >= 1; i--) {
+            const disk = createDisk(i);
+            disksContainers[0].appendChild(disk);
+        }
+
+        // 调整圆盘尺寸以适应屏幕
+        adjustDiskSizes();
+
+        // 为每个塔添加点击事件
+        towers.forEach((tower, index) => {
+            tower.onclick = () => handleTowerClick(index);
+        });
+        
+        // 清除现有的庆祝动画间隔
+        if (window.celebrationInterval) {
+            clearInterval(window.celebrationInterval);
+            window.celebrationInterval = null;
+        }
+        
+        // 隐藏庆祝动画容器
+        celebrationContainer.style.display = 'none';
+        perfectCelebrationContainer.style.display = 'none';
+        celebrationContainer.innerHTML = '';
+        perfectCelebrationContainer.innerHTML = '';
+    }
+
+    // 创建一个圆盘
+    function createDisk(size) {
+        const disk = document.createElement('div');
+        disk.className = 'disk';
+        // 添加固定颜色类
+        disk.classList.add(`disk-color-${size}`);
+        
+        // 宽度将在adjustDiskSizes中设置
+        return disk;
+    }
+
+    // 处理塔的点击事件
+    function handleTowerClick(towerIndex) {
+        if (gameCompleted) return;
+        
+        // 第一次点击时，游戏开始
+        if (!gameStarted) {
+            gameStarted = true;
+            // 禁用圆盘数量选择按钮
+            initDiskButtons();
+        }
+
+        const currentTower = disksContainers[towerIndex];
+        const topDisk = currentTower.lastElementChild;
+
+        // 如果没有选中圆盘，尝试选择当前塔的顶部圆盘
+        if (!selectedDisk) {
+            if (!topDisk) {
+                showMessage('请选择一个有圆盘的塔');
+                return;
+            }
+            
+            selectedDisk = topDisk;
+            selectedTower = towerIndex;
+            selectedDisk.classList.add('selected');
+            return;
+        }
+
+        // 如果点击了同一个塔，取消选择
+        if (selectedTower === towerIndex) {
+            selectedDisk.classList.remove('selected');
+            selectedDisk = null;
+            selectedTower = null;
+            return;
+        }
+
+        // 检查移动是否合法 - 使用类名比较尺寸
+        if (topDisk) {
+            const selectedSize = getDiscSize(selectedDisk);
+            const topDiskSize = getDiscSize(topDisk);
+            
+            if (selectedSize > topDiskSize) {
+                showMessage('不能将大圆盘放在小圆盘上');
+                selectedDisk.classList.add('error');
+                
+                // 播放错误音效
+                playSound(errorSound);
+                
+                setTimeout(() => {
+                    selectedDisk.classList.remove('error');
+                }, 500);
+                return;
+            }
+        }
+
+        // 移动圆盘
+        currentTower.appendChild(selectedDisk);
+        selectedDisk.classList.remove('selected');
+        moveCount++;
+        moveCountElement.textContent = moveCount;
+        
+        // 播放移动音效
+        playSound(moveSound);
+
+        // 检查游戏是否完成
+        checkGameCompletion();
+
+        // 重置选择状态
+        selectedDisk = null;
+        selectedTower = null;
+    }
+    
+    // 从类名获取圆盘尺寸
+    function getDiscSize(disk) {
+        const sizeClass = Array.from(disk.classList)
+            .find(cls => cls.startsWith('disk-color-'));
+        if (sizeClass) {
+            return parseInt(sizeClass.split('-')[2]);
+        }
+        return 0;
+    }
+
+    // 显示消息
     function showMessage(text) {
+        const messageElement = document.getElementById('message');
+        const messageCloneElement = document.getElementById('message-clone');
+        
         // 如果没有文本，清空消息
         if (!text) {
             messageElement.textContent = '';
@@ -356,327 +510,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * 创建圆盘元素
-     * @param {number} size - 圆盘大小(1为最小)
-     * @returns {HTMLElement} 创建的圆盘DOM元素
-     */
-    function createDisk(size) {
-        const disk = document.createElement('div');
-        disk.className = 'disk';
-        disk.dataset.size = size;
-        disk.classList.add(`disk-${size}`);
-        
-        // 调整宽度
-        const gameContainer = document.querySelector('.game-container');
-        const containerWidth = gameContainer.offsetWidth;
-        const towerWidth = containerWidth / 3.5;
-        
-        let baseWidth, increment;
-        
-        if (containerWidth < 350) {
-            baseWidth = 20;
-            increment = 10;
-        } else if (containerWidth < 450) {
-            baseWidth = 25;
-            increment = 12;
-        } else if (containerWidth < 600) {
-            baseWidth = 30;
-            increment = 13;
-        } else {
-            baseWidth = 30;
-            increment = 15;
-        }
-        
-        const width = baseWidth + ((diskCount + 1 - size) * increment);
-        disk.style.width = `${width}px`;
-        
-        return disk;
-    }
-
-    /**
-     * 初始化游戏
-     * 清除现有状态，创建初始圆盘，重置计数器和消息
-     */
-    function initGame() {
-        // 重置状态
-        gameStarted = false;
-        gameCompleted = false;
-        selectedDisk = null;
-        selectedTower = null;
-        moveCount = 0;
-        moveCountElement.textContent = '0';
-        
-        // 清空塔上的所有圆盘
-        disksContainers.forEach(container => {
-            container.innerHTML = '';
-        });
-        
-        // 移除高亮和选中状态
-        towers.forEach(tower => {
-            tower.classList.remove('selected');
-            tower.classList.remove('highlight');
-        });
-        
-        // 移除游戏区域的特殊效果
-        const gameContainer = document.querySelector('.game-container');
-        gameContainer.classList.remove('perfect-glow');
-        
-        // 移除塔的特殊效果
-        const allTowers = document.querySelectorAll('.tower');
-        allTowers.forEach(tower => {
-            tower.classList.remove('tower-perfect');
-        });
-        
-        // 停止庆祝动画
-        celebrationContainer.style.display = 'none';
-        perfectCelebrationContainer.style.display = 'none';
-        celebrationContainer.innerHTML = '';
-        perfectCelebrationContainer.innerHTML = '';
-        
-        if (window.celebrationInterval) {
-            clearInterval(window.celebrationInterval);
-            window.celebrationInterval = null;
-        }
-        
-        // 清空消息
-        showMessage('');
-        
-        // 在第一根柱子上添加圆盘
-        for (let i = diskCount; i >= 1; i--) {
-            disksContainers[0].appendChild(createDisk(i));
-        }
-        
-        // 重置按钮状态
-        initDiskButtons();
-    }
-
-    /**
-     * 选择圆盘
-     * 处理塔的点击逻辑，包括选择和移动圆盘
-     * @param {number} towerIndex - 塔的索引(0-2)
-     */
-    function selectDisk(towerIndex) {
-        // 如果游戏已完成，不处理点击
-        if (gameCompleted) return;
-        
-        // 游戏开始标记
-        if (!gameStarted) {
-            gameStarted = true;
-            initDiskButtons(); // 更新按钮状态（禁用数量选择）
-        }
-        
-        // 清除所有塔的高亮状态
-        towers.forEach(tower => tower.classList.remove('highlight'));
-        
-        // 如果当前没有选中的圆盘，尝试选择一个
-        if (selectedDisk === null) {
-            // 检查目标塔是否有圆盘
-            const disksInTower = disksContainers[towerIndex].querySelectorAll('.disk');
-            if (disksInTower.length === 0) return; // 空塔，不执行操作
+    // 检查游戏是否完成
+    function checkGameCompletion() {
+        // 如果最后一个塔上的圆盘数等于总圆盘数，游戏完成
+        if (disksContainers[2].childElementCount === diskCount) {
+            gameCompleted = true;
+            // 启用圆盘数量选择按钮
+            initDiskButtons();
             
-            // 获取最顶部的圆盘（最后一个子元素）
-            const topDisk = disksInTower[disksInTower.length - 1];
-            topDisk.classList.add('selected');
+            // 计算最少移动次数：2^n - 1
+            const minMoves = Math.pow(2, diskCount) - 1;
+            const isPerfect = moveCount === minMoves;
             
-            // 更新选中状态
-            selectedDisk = topDisk;
-            selectedTower = towerIndex;
-            
-            // 高亮当前选中的塔
-            towers[towerIndex].classList.add('selected');
-            
-            // 高亮可以移动到的塔
-            for (let i = 0; i < 3; i++) {
-                if (i !== towerIndex) {
-                    const canMove = canMoveToTower(i);
-                    if (canMove) {
-                        towers[i].classList.add('highlight');
-                    }
-                }
-            }
-        } else {
-            // 已经有选中的圆盘，尝试移动
-            
-            // 如果点击的是当前选中的塔，取消选择
-            if (towerIndex === selectedTower) {
-                selectedDisk.classList.remove('selected');
-                towers[selectedTower].classList.remove('selected');
-                selectedDisk = null;
-                selectedTower = null;
-                return;
+            if (isPerfect) {
+                showMessage(`恭喜！你用了最少的 ${minMoves} 步完成了游戏！`);
+                // 播放完美胜利音效
+                playSound(perfectSound);
+                // 显示完美胜利庆祝动画
+                createCelebration(true);
+            } else {
+                showMessage(`恭喜！你用了 ${moveCount} 步完成了游戏！最少步数是 ${minMoves} 步`);
+                // 播放普通胜利音效
+                playSound(victorySound);
+                // 显示普通胜利庆祝动画
+                createCelebration(false);
             }
             
-            // 尝试将圆盘移动到目标塔
-            const moveSuccessful = moveDisk(selectedTower, towerIndex);
-            
-            // 取消选中状态
-            if (selectedDisk) {
-                selectedDisk.classList.remove('selected');
-            }
-            towers[selectedTower].classList.remove('selected');
-            selectedDisk = null;
-            selectedTower = null;
-            
-            // 如果移动成功，检查游戏是否完成
-            if (moveSuccessful) {
-                if (checkGameComplete()) {
-                    gameCompleted = true;
-                    
-                    // 计算最少步数
-                    const minMoves = calculateMinMoves(diskCount);
-                    
-                    // 完美通关（最少步数）
-                    if (moveCount === minMoves) {
-                        showMessage(`恭喜！你完美地完成了游戏，使用了最少步数：${moveCount}步！`);
-                        playSound(perfectSound);
-                        createCelebration(true); // 特殊的完美通关庆祝效果
-                    } else {
-                        showMessage(`恭喜！你完成了游戏，总共用了${moveCount}步！(最少步数是${minMoves})`);
-                        playSound(victorySound);
-                        createCelebration(false); // 普通庆祝效果
-                    }
-                    
-                    // 重新启用按钮选择
-                    gameStarted = false;
-                    initDiskButtons();
-                }
-            }
+            // 添加庆祝动画到圆盘
+            disksContainers[2].childNodes.forEach(disk => {
+                disk.style.animation = 'celebrate 0.5s ease-in-out';
+            });
         }
     }
 
-    /**
-     * 检查是否可以将当前选中的圆盘移动到目标塔
-     * @param {number} targetTower - 目标塔索引
-     * @returns {boolean} 是否可以移动
-     */
-    function canMoveToTower(targetTower) {
-        // 获取目标塔上的圆盘
-        const disksInTarget = disksContainers[targetTower].querySelectorAll('.disk');
-        
-        // 如果目标塔为空，可以移动
-        if (disksInTarget.length === 0) return true;
-        
-        // 获取目标塔顶部圆盘的大小
-        const topDiskInTarget = disksInTarget[disksInTarget.length - 1];
-        const targetSize = parseInt(topDiskInTarget.dataset.size);
-        
-        // 获取当前选中圆盘的大小
-        const selectedSize = parseInt(selectedDisk.dataset.size);
-        
-        // 只有当选中的圆盘比目标塔顶部圆盘小时才可以移动
-        return selectedSize < targetSize;
-    }
-
-    /**
-     * 移动圆盘
-     * @param {number} fromTower - 起始塔索引
-     * @param {number} toTower - 目标塔索引
-     * @returns {boolean} 移动是否成功
-     */
-    function moveDisk(fromTower, toTower) {
-        // 获取目标塔上的圆盘
-        const disksInTarget = disksContainers[toTower].querySelectorAll('.disk');
-        
-        // 如果目标塔有圆盘，检查是否可以移动
-        if (disksInTarget.length > 0) {
-            const topDiskInTarget = disksInTarget[disksInTarget.length - 1];
-            const targetSize = parseInt(topDiskInTarget.dataset.size);
-            const selectedSize = parseInt(selectedDisk.dataset.size);
-            
-            // 如果选中的圆盘比目标塔顶部圆盘大，不能移动
-            if (selectedSize >= targetSize) {
-                // 显示错误提示
-                showMessage('错误: 不能将大圆盘放在小圆盘上！');
-                
-                // 播放错误音效
-                playSound(errorSound);
-                
-                // 添加震动效果
-                selectedDisk.classList.add('error');
-                setTimeout(() => {
-                    selectedDisk.classList.remove('error');
-                }, 500);
-                
-                return false;
-            }
-        }
-        
-        // 执行移动
-        disksContainers[toTower].appendChild(selectedDisk);
-        
-        // 更新移动次数
-        moveCount++;
-        moveCountElement.textContent = moveCount;
-        
-        // 播放移动音效
-        playSound(moveSound);
-        
-        // 清除错误消息
-        showMessage('');
-        
-        return true;
-    }
-
-    /**
-     * 检查游戏是否完成
-     * 所有圆盘都移动到第三根柱子上即为完成
-     * @returns {boolean} 游戏是否完成
-     */
-    function checkGameComplete() {
-        // 游戏完成条件: 所有圆盘都在第三根柱子上
-        return disksContainers[2].children.length === diskCount;
-    }
-
-    /**
-     * 计算指定盘子数量的最少移动次数
-     * 汉诺塔最少移动次数公式: 2^n - 1
-     * @param {number} disks - 盘子数量
-     * @returns {number} 最少移动次数
-     */
-    function calculateMinMoves(disks) {
-        return Math.pow(2, disks) - 1;
-    }
-
-    // ==================
-    // 事件监听器设置
-    // ==================
-    
-    // 圆盘数量按钮点击事件
+    // 监听圆盘按钮点击
     diskButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // 如果游戏已经开始且未完成，不允许更改盘子数量
-            if (gameStarted && !gameCompleted) return;
+            if (gameStarted && !gameCompleted) return; // 游戏进行中不允许更改
             
-            const newDiskCount = parseInt(button.dataset.value);
-            if (newDiskCount !== diskCount) {
-                diskCount = newDiskCount;
-                diskCountInput.value = diskCount;
-                initGame();
-            }
+            diskCount = parseInt(button.dataset.value);
+            diskCountInput.value = diskCount;
+            initDiskButtons();
+            initGame();
         });
     });
-    
-    // 塔点击事件
-    towers.forEach((tower, index) => {
-        tower.addEventListener('click', () => {
-            selectDisk(index);
-        });
-    });
-    
-    // 重新开始按钮点击事件
-    restartButton.addEventListener('click', () => {
-        initGame();
-    });
-    
-    // 窗口大小变化事件
-    window.addEventListener('resize', () => {
-        adjustDiskSizes();
-    });
+
+    // 监听重新开始按钮
+    restartButton.addEventListener('click', initGame);
 
     // 初始化游戏
     initGame();
-    
-    // 调整初始圆盘尺寸
-    adjustDiskSizes();
 }); 
