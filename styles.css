@@ -1,23 +1,63 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* =======================
+   变量和基本设置
+   ======================= */
 :root {
-    --primary-color: #4a6baf;
-    --secondary-color: #7bd46e;
-    --accent-color: #ffcc29;
-    --text-color: #2c3e50;
+    /* 颜色变量 */
+    --primary-color: #6c5ce7;
+    --secondary-color: #00b894;
+    --accent-color: #ffa801;
+    --text-color: #2d3436;
     --light-text: #ffffff;
+    --danger-color: #ff7675;
+    --success-color: #55efc4;
     --shadow-color: rgba(0, 0, 0, 0.2);
-    --background-gradient: linear-gradient(to bottom, #b3e0ff, #eff7ff);
-    --pole-color: #deb887;
-    --base-color: #8b4513;
+    --background-gradient: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+    --pole-color: #b77e36;
+    --base-color: #8d5524;
+    --app-padding: 15px;
+    --border-radius: 20px;
+    --perfect-glow: 0 0 20px #ffeaa7, 0 0 40px #fdcb6e, 0 0 80px #f9ca24;
+    /* 添加游戏标题和文本字体变量 */
+    --title-font: 'Fredoka', 'Bubblegum Sans', 'DFWaWaSC', 'Comic Sans MS', sans-serif;
+    --text-font: 'Quicksand', 'Varela Round', 'YouYuan', 'Arial Rounded MT Bold', sans-serif;
 }
 
+/* 使用本地字体作为替代，避免谷歌字体 */
+/* @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Bubblegum+Sans&family=Quicksand:wght@400;500;600;700&family=Varela+Round&display=swap'); */
+
+@font-face {
+    font-family: 'Fredoka';
+    src: local('Fredoka'), local('Fredoka One'), local('FredokaOne-Regular');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Quicksand';
+    src: local('Quicksand'), local('Quicksand-Medium');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'DFWaWaSC';
+    src: local('DFWaWaSC'), local('DFWaWaSC-W5');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 游戏字体设置 */
+@font-face {
+    font-family: 'GameFont';
+    src: local('Fredoka'), local('Bubblegum Sans'), local('DFWaWaSC'), local('Comic Sans MS');
+    font-weight: normal;
+}
+
+/* =======================
+   基本布局和响应式设计
+   ======================= */
 body {
-    font-family: 'Baloo 2', 'Comic Sans MS', cursive, sans-serif;
+    font-family: var(--text-font);
     background: var(--background-gradient);
     color: var(--text-color);
     min-height: 100vh;
@@ -26,8 +66,23 @@ body {
     display: grid;
     place-items: center;
     padding: 10px;
+    position: relative;
 }
 
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10zm10 8c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm40 40c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.6;
+    z-index: -2;
+}
+
+/* 游戏背景效果 */
 .game-background {
     position: fixed;
     top: 0;
@@ -35,272 +90,373 @@ body {
     width: 100%;
     height: 100%;
     background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 204, 41, 0.1) 30px, transparent 50px),
-        radial-gradient(circle at 90% 30%, rgba(123, 212, 110, 0.1) 40px, transparent 60px),
-        radial-gradient(circle at 50% 80%, rgba(74, 107, 175, 0.1) 50px, transparent 70px);
+        radial-gradient(circle at 10% 20%, rgba(255, 204, 41, 0.15) 30px, transparent 60px),
+        radial-gradient(circle at 90% 30%, rgba(123, 212, 110, 0.15) 40px, transparent 70px),
+        radial-gradient(circle at 50% 80%, rgba(108, 92, 231, 0.15) 50px, transparent 80px),
+        radial-gradient(circle at 20% 50%, rgba(255, 118, 117, 0.12) 35px, transparent 65px),
+        radial-gradient(circle at 80% 60%, rgba(112, 161, 255, 0.12) 45px, transparent 75px);
+    background-size: 200% 200%;
+    animation: gradientBackground 15s ease infinite;
     z-index: -1;
 }
 
+@keyframes gradientBackground {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+
+/* 主容器 */
 .container {
-    width: 100%;
-    max-width: 800px;
-    min-height: 450px;
+    background-color: var(--container-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     display: grid;
     grid-template-rows: auto auto auto 1fr auto;
-    gap: 15px;
-    padding: 20px;
-    margin: auto;
-    background-color: rgba(255, 255, 255, 0.85);
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(5px);
+    gap: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 900px;
+    min-height: 90vh;
+    max-height: 95vh;
+    overflow: hidden;
+    position: relative;
 }
 
-header {
-    text-align: center;
+/* 移除之前的顶部装饰 */
+.container::after, 
+.container::before {
+    content: none;
+    display: none;
 }
 
+/* =======================
+   游戏界面元素
+   ======================= */
+/* 标题样式 */
 h1 {
+    font-family: var(--title-font);
     color: var(--primary-color);
-    font-size: 2.5rem;
-    text-shadow: 2px 2px 4px var(--shadow-color);
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-size: 2.8rem;
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(45deg, var(--primary-color), #a29bfe);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* 添加文字描边效果增强可读性 */
+    -webkit-text-stroke: 1px rgba(108, 92, 231, 0.3);
 }
 
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(to right, transparent, var(--accent-color), transparent);
+    border-radius: 5px;
+    opacity: 0.7;
+}
+
+/* 游戏控制区域 */
 .game-controls {
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
+    background-color: rgba(248, 248, 248, 0.7);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
+/* 圆盘数量选择器 */
 .disk-count-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.disk-count-container label {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary-color);
+    font-weight: bold;
 }
 
 .disk-count-selector {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin-top: 10px;
 }
 
 .disk-buttons {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
+    gap: 10px;
 }
 
 .disk-button {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: none;
-    background-color: #e1e1e1;
+    background-color: #f0f0f0;
+    border: 2px solid rgba(0, 0, 0, 0.1);
     color: var(--text-color);
-    font-size: 1rem;
     font-weight: bold;
+    font-size: 1.2rem;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 3px 6px var(--shadow-color);
+    transition: all var(--animation-speed) ease;
     display: grid;
     place-items: center;
 }
 
 .disk-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px var(--shadow-color);
+    background-color: #e5e5e5;
+    transform: scale(1.05);
 }
 
 .disk-button.active {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
 }
 
-/* 禁用状态 */
 .disk-button.disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: 0 2px 4px var(--shadow-color);
 }
 
+/* 重新开始按钮 */
 .restart-button {
-    padding: 12px 20px;
+    background-color: var(--secondary-color);
+    color: white;
     border: none;
-    border-radius: 25px;
-    background-color: var(--accent-color);
-    color: var(--text-color);
-    font-size: 1.1rem;
-    font-family: 'Baloo 2', cursive;
-    font-weight: 600;
+    border-radius: var(--border-radius);
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 1rem;
     cursor: pointer;
-    box-shadow: 0 5px 15px var(--shadow-color);
-    transition: all 0.3s;
-    min-width: 120px;
+    transition: all var(--animation-speed) ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
 .restart-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px var(--shadow-color);
+    background-color: #00a085;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 .restart-button:active {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px var(--shadow-color);
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* 游戏信息区域 */
 .game-info {
-    text-align: center;
-    font-size: 1.3rem;
+    background-color: rgba(248, 248, 248, 0.7);
+    border-radius: var(--border-radius);
+    padding: 12px 20px;
     font-weight: bold;
-    color: var(--text-color);
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    text-align: center;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
+.moves {
+    font-size: 1.1rem;
+}
+
+/* =======================
+   游戏区域和塔
+   ======================= */
 .game-container {
-    display: grid;
-    place-items: center;
-    min-height: 250px;
     position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .base-container {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
     width: 100%;
-    max-width: 600px;
     height: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    position: relative;
+    padding-bottom: 20px;
 }
 
 .tower {
-    position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: center;
+    position: relative;
     height: 100%;
+    width: 33.333%;
+    cursor: pointer;
+    transition: transform var(--animation-speed) ease;
+}
+
+.tower:hover {
+    transform: translateY(-5px);
+}
+
+.tower.selected {
+    transform: translateY(-10px);
+}
+
+.tower.highlight {
+    background-color: rgba(0, 184, 148, 0.1);
+    border-radius: 15px;
 }
 
 .pole {
     position: absolute;
-    width: 14px;
-    background-color: var(--pole-color);
-    bottom: 18px;
-    height: 200px;
+    bottom: 0;
+    width: 15px;
+    height: 250px;
+    background: linear-gradient(to bottom, #cfb53b, #e6c453);
     border-radius: 8px 8px 0 0;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 1;
+}
+
+.disks {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    width: 100%;
+    z-index: 2;
+    position: relative;
+    justify-content: flex-end;
+    min-height: 160px;
 }
 
 .board-base {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: 18px;
-    background-color: var(--base-color);
-    border-radius: 10px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
-    z-index: 1;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to bottom, #8b4513, #a0522d);
+    border-radius: 0 0 8px 8px;
 }
 
-.disks {
-    position: absolute;
-    bottom: 18px;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    width: 100%;
-    z-index: 2;
-}
-
+/* =======================
+   圆盘样式和动画
+   ======================= */
 .disk {
-    margin-bottom: 5px;
-    border-radius: 20px;
-    height: 24px;
+    height: 30px;
+    border-radius: 15px;
+    margin-bottom: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-}
-
-.disk:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .disk.selected {
     transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-    animation: pulse 1s infinite alternate;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-.disk.error {
-    animation: shake 0.5s;
+.disk.movable {
+    animation: pulse 1.5s infinite alternate;
 }
 
-@keyframes pulse {
-    0% { transform: translateY(-10px) scale(1); }
-    100% { transform: translateY(-10px) scale(1.05); }
-}
+/* 圆盘颜色 - 从小到大渐变效果 */
+.disk-1 { background: linear-gradient(to right, #ff9a9e, #fad0c4); width: 60px; }
+.disk-2 { background: linear-gradient(to right, #a18cd1, #fbc2eb); width: 80px; }
+.disk-3 { background: linear-gradient(to right, #ffecd2, #fcb69f); width: 100px; }
+.disk-4 { background: linear-gradient(to right, #84fab0, #8fd3f4); width: 120px; }
+.disk-5 { background: linear-gradient(to right, #a6c0fe, #f68084); width: 140px; }
+.disk-6 { background: linear-gradient(to right, #d4fc79, #96e6a1); width: 160px; }
+.disk-7 { background: linear-gradient(to right, #30cfd0, #330867); width: 180px; }
 
+/* =======================
+   消息和通知
+   ======================= */
 .message {
-    height: 50px;
+    min-height: 60px;
     text-align: center;
-    color: #e74c3c;
+    color: var(--danger-color);
     font-weight: bold;
-    font-size: 1.3rem;
-    padding: 8px;
+    font-family: var(--text-font);
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    white-space: normal;
 }
 
-/* 色彩设定 - 按自然光谱顺序，从小到大 */
-.disk-color-1 { 
-    background: linear-gradient(to bottom, #ff7675, #e74c3c); 
-    border-color: #ff7675;
-} /* 赤 */
-.disk-color-2 { 
-    background: linear-gradient(to bottom, #f39c12, #e67e22); 
-    border-color: #f39c12;
-} /* 橙 */
-.disk-color-3 { 
-    background: linear-gradient(to bottom, #fdcb6e, #f1c40f); 
-    border-color: #fdcb6e;
-} /* 黄 */
-.disk-color-4 { 
-    background: linear-gradient(to bottom, #55efc4, #2ecc71); 
-    border-color: #55efc4;
-} /* 绿 */
-.disk-color-5 { 
-    background: linear-gradient(to bottom, #81ecec, #00cec9); 
-    border-color: #81ecec;
-} /* 青 */
-.disk-color-6 { 
-    background: linear-gradient(to bottom, #74b9ff, #0984e3); 
-    border-color: #74b9ff;
-} /* 蓝 */
-.disk-color-7 { 
-    background: linear-gradient(to bottom, #a29bfe, #6c5ce7); 
-    border-color: #a29bfe;
-} /* 紫 */
+.message.perfect-message {
+    background: linear-gradient(to bottom, rgba(255, 250, 230, 0.9), rgba(255, 245, 210, 0.95));
+    color: var(--perfect-color);
+    border: 2px solid rgba(255, 238, 173, 0.7);
+    box-shadow: 0 0 20px rgba(255, 204, 51, 0.3), inset 0 0 15px rgba(255, 204, 51, 0.2);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
 
-/* 庆祝动画容器 */
+/* 消息装饰 */
+.message-decoration {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.decoration-icon {
+    font-size: 24px;
+    animation: bounce 1s infinite alternate;
+}
+
+/* 容器外部的消息区域 - 用于横屏模式平板设备 */
+.message-outer-container {
+    width: 85%;
+    max-width: 800px;
+    margin: 10px auto 30px;
+    display: none; /* 默认隐藏 */
+}
+
+.message-clone {
+    min-height: 60px;
+    height: auto;
+    text-align: center;
+    color: var(--danger-color);
+    font-weight: bold;
+    font-family: var(--text-font);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    padding: 16px;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.message-clone.perfect-message {
+    background: linear-gradient(to bottom, rgba(255, 250, 230, 0.9), rgba(255, 245, 210, 0.95));
+    color: var(--perfect-color);
+    border: 2px solid rgba(255, 238, 173, 0.7);
+    box-shadow: 0 0 20px rgba(255, 204, 51, 0.3), inset 0 0 15px rgba(255, 204, 51, 0.2);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 1px 1px 2px rgba(0, 0, 0, 0.1);
+    animation: message-pulse 2s infinite alternate;
+}
+
+/* =======================
+   庆祝动画效果
+   ======================= */
 .celebration-container {
     position: fixed;
     top: 0;
@@ -308,122 +464,376 @@ h1 {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 999;
+    z-index: 1000;
     display: none;
     overflow: hidden;
 }
 
-/* 纸屑和星星的样式 */
-.confetti, .star {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    opacity: 0;
-    transform-origin: center;
+.perfect-celebration {
+    z-index: 1001; /* 完美通关的庆祝效果在最顶层 */
 }
 
 .confetti {
-    border-radius: 0;
+    position: absolute;
+    background-color: #f48fb1;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    z-index: 1000;
+    opacity: 0;
 }
 
 .star {
+    position: absolute;
+    background-color: #ffd54f;
+    width: 20px;
+    height: 20px;
     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    z-index: 1000;
+    opacity: 0;
 }
 
-/* 动画关键帧 */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
+.perfect-icon {
+    position: absolute;
+    font-size: 24px;
+    z-index: 1000;
+    opacity: 0;
 }
 
-@keyframes celebrate {
+.background-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    opacity: 0;
+    animation: flash 1s ease-out;
+}
+
+/* 完美通关游戏区域效果 */
+.game-container.perfect-glow {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+    animation: glow 2s infinite alternate;
+}
+
+.tower.tower-perfect {
+    animation: tower-pulse 1.5s infinite alternate;
+}
+
+/* =======================
+   动画关键帧
+   ======================= */
+@keyframes pulse {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+
+@keyframes flash {
+    0% { opacity: 0.7; }
+    100% { opacity: 0; }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+    100% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.7); }
+}
+
+@keyframes tower-pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    100% { transform: scale(1.03); }
 }
 
 @keyframes fall {
-    0% {
-        transform: translateY(-100px) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(calc(100vh + 100px)) rotate(360deg);
-        opacity: 0;
-    }
+    0% { transform: translateY(-100vh); opacity: 1; }
+    70% { opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes flutter {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(45deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-45deg); }
+    100% { transform: rotate(0deg); }
 }
 
 @keyframes twinkle {
-    0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
-    50% { opacity: 0.7; transform: scale(0.8) rotate(45deg); }
+    0% { opacity: 0.3; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.2); }
 }
 
-/* 响应式设计 - 改进移动设备上的显示 */
-@media (max-width: 600px) {
-    .container {
-        padding: 15px;
-        gap: 10px;
-    }
-    
-    h1 {
-        font-size: 2rem;
-    }
-    
-    .game-controls {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto;
-        gap: 10px;
-    }
-    
-    .disk-count-container {
+@keyframes disk-shine {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.3); }
+}
+
+@keyframes message-pulse {
+    0% { box-shadow: 0 0 10px rgba(255, 204, 51, 0.3); }
+    100% { box-shadow: 0 0 25px rgba(255, 204, 51, 0.5); }
+}
+
+/* =======================
+   响应式设计 - PC设备
+   ======================= */
+@media (min-width: 1024px) {
+    body {
+        /* 移除PC版的底部内边距，避免出现滚动条 */
+        padding: 0;
+        height: 100vh;
+        overflow-y: hidden;
+        /* 确保居中显示 */
+        display: flex;
+        justify-content: center;
         align-items: center;
     }
     
-    .restart-button {
-        width: 100%;
-        max-width: 200px;
-        margin: 0 auto;
-    }
-    
-    .disk {
-        height: 20px;
-    }
-    
-    .message {
-        font-size: 1.1rem;
-    }
-}
-
-/* 小屏幕设备调整圆盘大小 */
-@media (max-width: 450px) {
-    .pole {
-        width: 10px;
-    }
-    
-    .disk-button {
-        width: 35px;
-        height: 35px;
-        font-size: 0.9rem;
-    }
-    
-    .disk {
-        height: 18px;
-        border-width: 1px;
-    }
-}
-
-/* 最小高度限制 */
-@media (max-height: 500px) {
     .container {
-        min-height: 400px;
+        min-height: 600px;
+        max-height: 90vh;
+        gap: 20px;
+        padding: 25px;
+        margin: 0 auto; /* 修改margin为0 auto */
+        /* PC版不需要滚动 */
+        overflow: hidden;
+    }
+    
+    h1 {
+        font-size: 3.2rem;
+    }
+}
+
+/* =======================
+   响应式设计 - 平板设备
+   ======================= */
+/* 平板竖屏 */
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+    .container {
+        min-height: 90vh;
+        max-height: 95vh;
+        padding: 25px;
+        gap: 15px;
+    }
+    
+    h1 {
+        font-size: 3rem;
     }
     
     .game-container {
-        min-height: 200px;
+        min-height: 350px;
+    }
+}
+
+/* 平板横屏 - 特别处理消息区域问题 */
+@media (orientation: landscape) and (min-width: 768px) and (max-width: 1023px) {
+    body {
+        /* 使用flex布局控制整体内容 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        height: auto;
+        padding: 10px 0;
+        overflow-y: auto;
+    }
+
+    .container {
+        width: 85%;
+        max-width: 800px;
+        gap: 12px;
+        padding: 20px;
+        /* 改用flex布局 */
+        display: flex;
+        flex-direction: column;
+        /* 移除固定高度限制 */
+        min-height: auto;
+        height: auto;
+        /* 确保不会挤压其他元素 */
+        flex-shrink: 0;
+        /* 上边距，避免贴顶 */
+        margin: 10px auto 0;
+    }
+    
+    .game-container {
+        min-height: 260px;
+        height: 260px;
+        margin-bottom: 10px;
+        /* 确保游戏区域不被压缩 */
+        flex-shrink: 0;
     }
     
     .pole {
         height: 180px;
+    }
+
+    /* 隐藏容器内的消息区域 */
+    .container .message {
+        display: none;
+    }
+
+    /* 外部消息区域样式 */
+    .message-outer-container {
+        width: 85%;
+        max-width: 800px;
+        /* 确保显示在容器下方 */
+        margin: 15px auto;
+        padding: 0 20px;
+        /* 显示外部消息 */
+        display: block !important;
+        /* 确保不会被挤压 */
+        flex-shrink: 0;
+    }
+
+    .message-clone {
+        min-height: 60px;
+        height: auto;
+        font-size: 1.2rem;
+        padding: 15px 20px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        /* 确保文字可见 */
+        color: var(--text-color);
+        /* 确保消息显示 */
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        /* 文字换行 */
+        word-wrap: break-word;
+        white-space: normal;
+    }
+
+    .message-clone.perfect-message {
+        background: linear-gradient(to right, rgba(255, 248, 230, 0.95), rgba(255, 250, 240, 0.95));
+        border: 1px solid rgba(255, 188, 11, 0.3);
+        color: var(--perfect-color);
+        animation: message-pulse 2s infinite alternate;
+    }
+
+    /* 调整其他元素大小 */
+    h1 {
+        font-size: 2.6rem;
+        margin-bottom: 10px;
+        /* 确保标题不被压缩 */
+        flex-shrink: 0;
+    }
+
+    .game-info {
+        font-size: 1.2rem;
+        padding: 10px 15px;
+        /* 确保游戏信息不被压缩 */
+        flex-shrink: 0;
+    }
+}
+
+/* =======================
+   响应式设计 - 移动设备
+   ======================= */
+/* 手机竖屏 */
+@media (max-width: 767px) and (orientation: portrait) {
+    .container {
+        padding: 15px;
+        gap: 10px;
+        min-height: 85vh;
+    }
+    
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 5px;
+    }
+    
+    .game-controls {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .restart-button {
+        width: 100%;
+        padding: 8px;
+    }
+    
+    .disk-count-container {
+        text-align: center;
+    }
+    
+    .disk-count-selector {
+        justify-content: center;
+    }
+    
+    .disk-button {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .game-info {
+        padding: 8px 12px;
+    }
+    
+    .game-container {
+        min-height: 280px;
+    }
+    
+    .message {
+        min-height: 50px;
+        font-size: 1rem;
+        padding: 12px;
+    }
+    
+    .pole {
+        width: 10px;
+        height: 170px;
+    }
+    
+    .disk {
+        height: 22px;
+        margin-bottom: 2px;
+    }
+    
+    .disk-1 { width: 40px; }
+    .disk-2 { width: 55px; }
+    .disk-3 { width: 70px; }
+    .disk-4 { width: 85px; }
+    .disk-5 { width: 100px; }
+    .disk-6 { width: 115px; }
+    .disk-7 { width: 130px; }
+}
+
+/* 手机横屏 */
+@media (orientation: landscape) and (max-width: 767px) {
+    body {
+        padding-bottom: 25px; /* 增加底部空间 */
+    }
+    
+    .container {
+        width: 92%;
+        padding: 12px;
+        padding-bottom: 20px;
+        gap: 10px;
+    }
+    
+    .game-container {
+        min-height: 230px;
+        height: 230px;
+    }
+    
+    .pole {
+        height: 160px;
+    }
+    
+    h1 {
+        font-size: 2.2rem;
     }
 } 

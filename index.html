@@ -1,76 +1,95 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 元数据 -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>汉诺塔小游戏</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="汉诺塔游戏 - 一个经典的智力谜题游戏，移动圆盘，使用最少步数解决难题。">
+    <meta name="author" content="汉诺塔游戏团队">
+    
+    <!-- 标题和图标 -->
+    <title>汉诺塔游戏</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏆</text></svg>">
+    
+    <!-- 样式表 -->
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- 移动设备特定设置 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#6c5ce7">
 </head>
 <body>
-    <div class="game-background"></div>
-    
+    <!-- 主容器 -->
     <div class="container">
-        <header>
-            <h1>汉诺塔</h1>
-        </header>
+        <!-- 游戏标题 -->
+        <h1>汉诺塔</h1>
         
-        <div class="game-controls">
-            <div class="disk-count-container">
-                <label for="diskCount">选择圆盘数量:</label>
-                <div class="disk-count-selector">
-                    <div class="disk-buttons">
-                        <button class="disk-button" data-value="1">1</button>
-                        <button class="disk-button" data-value="2">2</button>
-                        <button class="disk-button" data-value="3">3</button>
-                        <button class="disk-button" data-value="4">4</button>
-                        <button class="disk-button" data-value="5">5</button>
-                        <button class="disk-button" data-value="6">6</button>
-                        <button class="disk-button" data-value="7">7</button>
-                    </div>
-                    <input type="hidden" id="diskCount" value="3">
+        <!-- 控制区域 -->
+        <div class="controls">
+            <!-- 盘子数量选择器 -->
+            <div class="disk-control">
+                <span>选择盘子数量:</span>
+                <div class="disk-buttons">
+                    <button class="disk-button" data-value="3">3</button>
+                    <button class="disk-button" data-value="4">4</button>
+                    <button class="disk-button" data-value="5">5</button>
+                    <button class="disk-button" data-value="6">6</button>
+                    <button class="disk-button" data-value="7">7</button>
                 </div>
+                <input type="hidden" id="diskCount" value="3">
             </div>
-            <button id="restart" class="restart-button">重新开始</button>
+            
+            <!-- 移动计数和重新开始按钮 -->
+            <div class="game-info">
+                <div class="move-counter">
+                    <span>移动次数: </span>
+                    <span id="moveCount">0</span>
+                </div>
+                <button id="restart" class="restart-button">重新开始</button>
+            </div>
         </div>
         
-        <div class="game-info">
-            <div class="moves">移动次数: <span id="moveCount">0</span></div>
-        </div>
-        
+        <!-- 游戏区域 -->
         <div class="game-container">
-            <div class="base-container">
-                <div class="tower" id="tower1">
-                    <div class="pole"></div>
-                    <div class="disks"></div>
-                </div>
-                <div class="tower" id="tower2">
-                    <div class="pole"></div>
-                    <div class="disks"></div>
-                </div>
-                <div class="tower" id="tower3">
-                    <div class="pole"></div>
-                    <div class="disks"></div>
-                </div>
-                <div class="board-base"></div>
+            <!-- 三根柱子 -->
+            <div id="tower1" class="tower">
+                <div class="base"></div>
+                <div class="pole"></div>
+                <div class="disks"></div>
             </div>
+            <div id="tower2" class="tower">
+                <div class="base"></div>
+                <div class="pole"></div>
+                <div class="disks"></div>
+            </div>
+            <div id="tower3" class="tower">
+                <div class="base"></div>
+                <div class="pole"></div>
+                <div class="disks"></div>
+            </div>
+            
+            <!-- 庆祝动画容器 - 普通完成 -->
+            <div id="celebration" class="celebration-container"></div>
+            
+            <!-- 庆祝动画容器 - 完美完成 -->
+            <div id="perfectCelebration" class="celebration-container"></div>
         </div>
         
-        <div class="message" id="message"></div>
+        <!-- 游戏消息区域 -->
+        <div id="message" class="message"></div>
+        
+        <!-- 克隆消息区域 - 用于平板横屏模式显示 -->
+        <div id="message-clone" class="message message-clone"></div>
     </div>
     
     <!-- 音效资源 -->
-    <audio id="moveSound" src="sounds/move.mp3" preload="auto"></audio>
-    <audio id="errorSound" src="sounds/error.mp3" preload="auto"></audio>
-    <audio id="victorySound" src="sounds/victory.mp3" preload="auto"></audio>
-    <audio id="perfectSound" src="sounds/perfect.mp3" preload="auto"></audio>
+    <audio id="moveSound" src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAkJCQkJCQkJCQkJCQkJCQwMDAwMDAwMDAwMDAwMDA4ODg4ODg4ODg4ODg4ODg4P//////////////////AAAAOkxhdmM1OC4xMzQAAAAAAAAAAAAASW5mbwAAAA8AAAADAAACsACQkJCQkJCQkJCQkJCQkJDAwMDAwMDAwMDAwMDAwMDg4ODg4ODg4ODg4ODg4ODg///////////////////gOQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/jOMAAAANRAEWGaEAIkFpZZRgAszmQWWGLAgBAEAQfB8+D4PnwfB8fB+D8IQQQ+hCED4QQhCCEH0IIQQ+ECEIQAwiDYPnwfPg+D4Pg5MLyeymNbUzYavtQqfM1BtyZozIMCgsLw+tGp10ohEmUkyd2SkmSxOqPJYnCmU8UlROFJJzGBJkzGG6itMocwgaMzcaGN0xFjR5h8qjxSOTR6RROUpIx5LB6OVjbPbNIGKTyaKTDdRWDwdFJdWOhkxhsooxaOMBSNDBgaLI5vN1RsUiw2aQaLsosLB0Uii9VMocqLG9SqZSfGGqioaLBooowqGyimNiyooCxupOoZMVJicvK3VjYrFxcNFR4oqJisqHhsrGigrHiooLBoqKhoYPDZWVDQwWDxRUNDR0aKSsaKhgeGikqGBgaLBgsHhkxSVFIwMDB4aGDAwMlRSMFA0MHhsrGSgaKigaKRgoGBg8NlYyUjIyMlI0OFZUMnxgrGhkZGSkaGRsdKBscHhgvGRksHhkYJCQACf/jOMAAAAQJAFGGoEAI0JZZZ9gA/5O7/0/9PyEiCFAIUAgQCFAKAQoBQCgEHKCDlAKOUAoBBygg5QCgEKAQcoIOblAIOUHNzc3Nzc3Nzc3JQCBAKAQoBCgECAQoBAhV/+VAgQCBAINggwCAQIBAgECBM/5UCDAIECD/9QIPggQIECAQICFlVVL/lQIMAgQIPg2CAQIECAQIEHwQqqqg5QCgECBB8GwQf+oEH/qBB/6j//qDlBzcg//IPg+CAQIBAgECBAyqqvIPggQIECD4IBwVVUkHwQDgIBwEA4KqqUg+CAcBAOAgHAQqqqSD4IBwEA4CAcBAOCqqqg5QCFAIOUAoBAOCqqqoOUAoBAOAgHAQDgqqqqDlAIOUA4CAcBAOCgHBVVUkHOUEA4CAcBAQQDgqqpKDlAIOUAoBAOAgHBQVVVUkHKAcFAOAgHAQEEA4KqqSg5QQDgoBwEA4CAggHBVVSg5QQDgoBwEA5QCgqqqqSlVVVVVVVVVVVVVVVVVVVVVVQ==" preload="auto"></audio>
+    <audio id="errorSound" src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAEQAAEhsAVVVVVVVVVVVVVVVVVVWAgICAgICAgICAgICAgICAvLy8vLy8vLy8vLy8vLy84uLi4uLi4uLi4uLi4uLi////////////////////////////////////////////AAAAOkxhdmM1OC4xMzQAAAAAAAAAAAAASW5mbwAAAA8AAAARAAASGwBVVVVVVVVVVVVVVVVVVYCAgICAgICAgICAgICAgIC8vLy8vLy8vLy8vLy8vLzi4uLi4uLi4uLi4uLi4uL////////////////////////////jAOQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/jOMAAAANRAEWGaEAIoFpZZZ9gAyF5OCmFHRdHLiJyiRtCKz+ORnPDT46lc6KCOXBpXkSRJFAYRiQFxQIimlBR6eBRKNgXP///5RLGJwbYwWf5wcHBwNsYDaDAgwIP///94MgTY0RNjIEGBB5///3gwBNjRDajAZBvf///vYwGRNjIE2NBkG////7oGAbY0INmVQGBB////vSBQDdMIOwWPkG9////e0QGDoBQWGkG////93IUIBBM2pQ6HYsE+6GAIo0kIQcDaYWBgbf///3ZjpYZBKgC8Sx0g2v///vRgmQB0OwYMgQYEH///+9QbXCAZQsGyLZy4OBtf///dE4J4KkKjANhDAdC0IBg0mHwgGVPDICL8XsaBxf///9zIBAGQCAKQWBAHQ7BgXwFv//+9IDJZGRgCYRhCKRSDZBvy7lf5wDNj30UDIdgwIvf///ejJAgDoYGRgG0wNS2G1///90HQIAqGBgGwwMg2v///7uwGCBgOhgG1GBkG1///99IMCDAgwIP///3ZkQKgYBtRgZBtf///e8GAwIMCDAg8CDB7///7oaIG0GBBgQYEHn//+8GgJsaImxkCDAg8///vBgCbGiG1GAyDe///+9jAZE2MgTY0GQb////ugYBtjQg2ZVAYEHkc0ajUajc0ajUajUac0ajUajUajUajUajc0ajUZf/jOMQAAARpAKkd2AAIyJpxhywAA2o1G5o1Go1GnNGo1Go1GnNGo1Go1Go1Go1Go1G5o1GozNzR//+aLTTmjUa//+ajTmi00ajT//5oajc0ajTmjT//+aDUbiMRqNqNR///mn//5pzRqNFpo1Go05o1Go1Go05o1Go1Go1Go1Go1Go3NGo1GZ+aP//zRaac0ajX//zUac0WmjUaf//mhqNzRqNOaNP//zQajcRiNRtRqP//zT//808KMYxnYzFRUV4xi+KePHjx4gCADx5VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQEA=" preload="auto"></audio>
+    <audio id="victorySound" src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAFAAAApAAICAgICAgICAgICAgICAgQEBAQEBAQEBAQEBAQEBgYGBgYGBgYGBgYGBgYGBwcHBwcHBwcHBwcHBwcHCAgICAgICAgICAgICAgICQkJCQkJCQkJCQkJCQkJCgoKCgoKCgoKCgoKCgoKCwsLCwsLCwsLCwsLCwsLDAwMDAwMDAwMDAwMDAwMDQ0NDQ0NDQ0NDQ0NDQ0NDg4ODg4ODg4ODg4ODg4OD///////////////8AAAAOUGFzc3BvcnQgQXVkaW8ATGF2ZjU4LjQyLjEwMAAAAAAAAAAAJAAAAAAAAAAAECDCr92CZgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//uQZAAAAKQSdxGeEAAxghunsMIAlTUVSc5hQAKhIqe5zAgAQCAIAgCAa7v3BgGAYBruD4Pg+D7+D/4IAgCAIAgQAuIEAQdB8EAQBAEAQBB0HwfB8HwfBQAKqqpKqgwCEIQgJgmCYJgmCYJiAEwTBMExACoMQYgxBiDEC4JgmCYJiAEGIMQYgxBiAAQBAMAwDAMQAX+CAIAgCAIAgCDoPg+D4PgoDB8HwfB8FAYBgGAYBgGIAACAIBgGAYBgG4Pg+D4PgoDB8HwfB8FA4Pg+D4PgoDAMAwDAMAwPg+D4Pg+CgMAwDAMAwDA+D4Pg+D4PgoDAMAwDAMDAAB8HwfB8HwUBgGAYBgGAYHwfB8HwfB8FAYBgGAYBgGBwfB8HwfB8FAYBgGAYBgeB8HwfB8HwfB8HwUD//////////4QhA6AQTBMEwTBMQAAAAA//NExEUY8yLYANPScA3///yEGHP+QERERGCIiImJ/JERERERExP5ERERERERDhERJ/iIiHCIiJ//iIiIiHCIR////ESf/ESf/ERERDhEOERERJ////////ESf/ERDhEREREOERERERBcMiIiIiHCIiIiIiERERERERERERJqq//////////1ERERERDhEREOEREnwBAEAQPg+D4Pg+D4KAwDAMAwDA0D4Pg+D4PgQA+D4Pg+D4KAwDAMAwDAwB8HwfB8HwRAEAQBAEAQPg+D4Pg+D4KAwDAMAwDA0D4Pg+D4PgQA+D4Pg+D4KAwDAMAwDA4Pg+D4Pg+Cgf//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jMURUmgigqoaJiKqqiYjaomaYmZoACAIAgCAAggFAIUAhQEEAQQBwEKAQoBCggEOdBBygwGUKBD6ggQFVuCHOgQfAhQEQoDnQQcGULwMBzkHOBDnQeOUHOkgEBwoDKQoBChAMQoHOggOdIBlIUDnQQcoQDEGAQHOQcoEOdB45Qc6D/ygw8ococDEGBlIUDnQQHDnShACg5BygQ50KBjlBzoP+UIPgQYKBlBgMpIBAc6CBlIUDnQQHDnQoMPKHAxCgZSFA50EBw50IUAoOQcoEBlIUDKQoHOg/5QYeDnQoGUGBlIUDnQQHDnQhQCgwMQYBAc5BygQ+oMPBzoUDEGBlIUDnQQHKEAxBgEBw5yDlAh9QYeBzoP+UIA" preload="auto"></audio>
+    <audio id="perfectSound" src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAFAAAApAAICAgICAgICAgICAgICAgQEBAQEBAQEBAQEBAQEBgYGBgYGBgYGBgYGBgYGBwcHBwcHBwcHBwcHBwcHCAgICAgICAgICAgICAgICQkJCQkJCQkJCQkJCQkJCgoKCgoKCgoKCgoKCgoKCwsLCwsLCwsLCwsLCwsLDAwMDAwMDAwMDAwMDAwMDQ0NDQ0NDQ0NDQ0NDQ0NDg4ODg4ODg4ODg4ODg4OD///////////////8AAAAOUGFzc3BvcnQgQXVkaW8ATGF2ZjU4LjQyLjEwMAAAAAAAAAAAJAAAAAAAAAAAECDCr92CZgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//uQZAAAAKQSdxGeEAAxghunsMIAlTUVSc5hQAKhIqe5zAgAQCAIAgCAa7v3BgGAYBruD4Pg+D7+D/4IAgCAIAgQAuIEAQdB8EAQBAEAQBB0HwfB8HwfBQAKqqpKqgwCEIQgJgmCYJgmCYJiAEwTBMExACoMQYgxBiDEC4JgmCYJiAEGIMQYgxBiAAQBAMAwDAMQAX+CAIAgCAIAgCDoPg+D4PgoDB8HwfB8FAYBgGAYBgGIAACAIBgGAYBgG4Pg+D4PgoDB8HwfB8FA4Pg+D4PgoDAMAwDAMAwPg+D4Pg+CgMAwDAMAwDA+D4Pg+D4PgoDAMAwDAMDAAB8HwfB8HwUBgGAYBgGAYHwfB8HwfB8FAYBgGAYBgGBwfB8HwfB8FAYBgGAYBgeB8HwfB8HwfB8HwUD//////////4QhA6AQTBMEwTBMQAAAAA//NExEUY8yLYANPScA3///yEGHP+QERERGCIiImJ/JERERERExP5ERERERERDhERJ/iIiHCIiJ//iIiIiHCIR////ESf/ESf/ERERDhEOERERJ////////ESf/ERDhEREREOERERERBcMiIiIiHCIiIiIiERERERERERERJqq//////////1ERERERDhEREOEREnwBAEAQPg+D4Pg+D4KAwDAMAwDA0D4Pg+D4PgQA+D4Pg+D4KAwDAMAwDAwB8HwfB8HwRAEAQBAEAQPg+D4Pg+D4KAwDAMAwDA0D4Pg+D4PgQA+D4Pg+D4KAwDAMAwDA4Pg+D4Pg+Cgf//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jMURUmgigqoaJiKqqiYjaomaYmZoACAIAgCAAggFAIUAhQEEAQQBwEKAQoBCggEOdBBygwGUKBD6ggQFVuCHOgQfAhQEQoDnQQcGULwMBzkHOBDnQeOUHOkgEBwoDKQoBChAMQoHOggOdIBlIUDnQQcoQDEGAQHOQcoEOdB45Qc6D/ygw8ococDEGBlIUDnQQHDnShACg5BygQ50KBjlBzoP+UIPgQYKBlBgMpIBAc6CBlIUDnQQHDnQoMPKHAxCgZSFA50EBw50IUAoOQcoEBlIUDKQoHOg/5QYeDnQoGUGBlIUDnQQHDnQhQCgwMQYBAc5BygQ+oMPBzoUDEGBlIUDnQQHKEAxBgEBw5yDlAh9QYeBzoP+UIA" preload="auto"></audio>
     
-    <!-- 庆祝动画容器 -->
-    <div id="celebration" class="celebration-container"></div>
-    <div id="perfectCelebration" class="celebration-container perfect-celebration"></div>
-
+    <!-- 脚本 -->
     <script src="script.js"></script>
 </body>
 </html> 
